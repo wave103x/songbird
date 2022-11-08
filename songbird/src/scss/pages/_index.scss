@@ -1,4 +1,22 @@
 body {
-    background-color: tomato;
-    font: 16px/1.4 Roboto, Arial, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font: 16px/1.4 Inter, Arial, sans-serif;
+    background-color: #293135;
+    background: bottom right 25% / 40% no-repeat url('../assets/image/bg-forest.svg'),
+    #293135;
+}
+
+.main {
+    width: max(310px, min(90%, 760px));
+    margin: 0 auto;
+    color: white;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
 }

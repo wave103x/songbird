@@ -7,8 +7,12 @@ const devMode = mode === 'development';
 
 module.exports = {
   mode,
-  entry: ['@babel/polyfill', './src/index.js'],
+  // entry: ['@babel/polyfill', './src/index.js'],
+  entry: './src/index.js',
   devtool: devMode ? 'inline-source-map' : undefined,
+  devServer: {
+    static: './dist'
+  },
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -30,7 +34,7 @@ module.exports = {
         use: [
           devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
           'css-loader',
-          {
+/*           {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
@@ -38,7 +42,7 @@ module.exports = {
               }
             }
           }
-          ,
+          , */
           'sass-loader',
         ]
       },
@@ -53,7 +57,7 @@ module.exports = {
         test: /\.(jpe?g|png|webp|gif|svg)$/i,
         use: [{
           loader: 'image-webpack-loader',
-          options: {
+/*           options: {
             mozjpeg: {
               progressive: true,
             },
@@ -73,10 +77,10 @@ module.exports = {
               quality: 75
             }
           },
-        }],
+ */        }],
         type: 'asset/resource',
       },
-      {
+/*       {
         test: /\.m?js$/,
         exclude: /(node_modules|bower_components)/,
         use: {
@@ -86,6 +90,6 @@ module.exports = {
           }
         }
       }
-    ]
+ */    ]
   }
 }
