@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+html(lang="ru")
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title="Songbird"
+  body
+    main.main
+      header.header
+        h1.logo song<span>bird</span>
+        button.button Начать викторину
+      article.greet(hidden)
+        img(class="greet__banner" src=require('./assets/image/bird-banner.webp'))
+        h2.greet__heading Что здесь происходит:
+        p Это викторина, здесь вы попробуете угадать птицу по её пению.
+        p Узнали с первой попытки - получите 5 баллов.
+        p Каждое неверное предположение - минус один балл.
+        p Приз только за выполнение без ошибок!
+        p Попытки не ограничены.
+        button.button.greet_button Приступить
+      article.quiz
+        .score
+          .text Ваш счёт:
+          .scoreValue 1
+        .question-list
+          .question-list__item 1
+          .question-list__item 2
+          .question-list__item 3
+          .question-list__item 4
+          .question-list__item 5
+        .question
+          .question__bird
+            img
+          .question__audio
+          .question__description
+          .question__answers-list

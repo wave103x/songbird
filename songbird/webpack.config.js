@@ -10,9 +10,6 @@ module.exports = {
   // entry: ['@babel/polyfill', './src/index.js'],
   entry: './src/index.js',
   devtool: devMode ? 'inline-source-map' : undefined,
-  devServer: {
-    static: './dist'
-  },
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -21,7 +18,8 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.html'
+      template: './src/index.pug',
+      filename: 'index.html'
     }),
     new MiniCssExtractPlugin({
       filename: 'style.[contenthash].css'
@@ -34,17 +32,25 @@ module.exports = {
         use: [
           devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
           'css-loader',
-/*           {
-            loader: 'postcss-loader',
-            options: {
-              postcssOptions: {
-                plugins: [require('postcss-preset-env')]
-              }
-            }
-          }
-          , */
+          /*           {
+                      loader: 'postcss-loader',
+                      options: {
+                        postcssOptions: {
+                          plugins: [require('postcss-preset-env')]
+                        }
+                      }
+                    }
+                    , */
           'sass-loader',
         ]
+      },
+      {
+        test: /\.pug$/,
+        use: [
+          {
+            loader: "pug-loader",
+          },
+        ],
       },
       {
         test: /\.woff2?$/i,
@@ -91,5 +97,11 @@ module.exports = {
         }
       }
  */    ]
-  }
+  },
+  devServer: {
+    static: './dist',
+    // watchFiles: {
+    //   paths: 'src/index.pug',
+    // }
+  },
 }
