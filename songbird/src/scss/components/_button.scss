@@ -11,4 +11,14 @@
   &:hover {
     background-color: hsla(0, 0%, 100%, 0.1);
   }
+  &_active_true {
+    @extend .button;
+    background-color: green;
+    pointer-events: none;
+  }
+  &_active_false {
+    @extend .button;
+    background-color: tomato;
+    pointer-events: none;
+  }
 }

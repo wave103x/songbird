@@ -9,8 +9,9 @@ html(lang="ru")
     main.main
       header.header
         h1.logo song<span>bird</span>
-        button.button Начать викторину
-      article.greet(hidden)
+        button.button.header__button_new-game(hidden) Заново
+        button.button.header__button_gallery Галерея птиц
+      article.greet
         img(class="greet__banner" src=require('./assets/image/bird-banner.webp'))
         h2.greet__heading Что здесь происходит:
         p Это викторина, здесь вы попробуете угадать птицу по её пению.
@@ -19,13 +20,13 @@ html(lang="ru")
         p Приз только за выполнение без ошибок!
         p Попытки не ограничены.
         button.button.greet_button Приступить
-      article.quiz
+      article.quiz(hidden)
         header.quiz__header
           .score
             .text Ваш счёт:
             .scoreValue 0
           .question-list
-            .question-list__item_active 1
+            .question-list__item 1
             .question-list__item 2
             .question-list__item 3
             .question-list__item 4
