@@ -3,9 +3,8 @@ body {
     margin: 0;
     padding: 0;
     font: 16px/1.4 Inter, Arial, sans-serif;
-    background-color: #293135;
     background: bottom right 25% / 40% no-repeat url('../assets/image/bg-forest.svg'),
-        #293135;
+        #312b2b;
 }
 
 .main {
@@ -45,4 +44,74 @@ body {
 .greet__heading {
     font-size: 32px;
     font-weight: 500;
+}
+
+.quiz__header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+}
+
+.score {
+    display: flex;
+    padding: 12px 16px;
+    gap: 8px;
+    border: 2px solid hsla(0, 0%, 100%, 0.2)
+}
+
+.scoreValue {
+    font-weight: bold;
+}
+
+.question-list {
+    display: flex;
+    margin-left: auto;
+    gap: 3rem;
+}
+
+.question-list__item {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 2px solid hsla(0, 0%, 100%, 0.2);
+    display: grid;
+    place-content: center;
+
+    &_active {
+        @extend .question-list__item;
+        background-color: hsla(0, 0%, 100%, 0.2);
+    }
+}
+
+.question__bird-audio {
+    display: flex;
+    gap: 2rem;
+}
+
+.question-bird__img {
+    width: 200px;
+    height: 160px;
+    object-fit: contain;
+}
+
+.question__container {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.question__answers-list {
+    width: 50%;
+}
+
+.answers-list__item {
+    @extend .button;
+    // margin: 0 auto;
+    margin-bottom: 1rem;
+    // width: 50%;
+}
+
+.question_button-next {
+    padding: 24px;
+    background-color: sandybrown;
 }

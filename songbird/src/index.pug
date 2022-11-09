@@ -20,18 +20,30 @@ html(lang="ru")
         p Попытки не ограничены.
         button.button.greet_button Приступить
       article.quiz
-        .score
-          .text Ваш счёт:
-          .scoreValue 1
-        .question-list
-          .question-list__item 1
-          .question-list__item 2
-          .question-list__item 3
-          .question-list__item 4
-          .question-list__item 5
+        header.quiz__header
+          .score
+            .text Ваш счёт:
+            .scoreValue 0
+          .question-list
+            .question-list__item_active 1
+            .question-list__item 2
+            .question-list__item 3
+            .question-list__item 4
+            .question-list__item 5
         .question
-          .question__bird
-            img
-          .question__audio
-          .question__description
-          .question__answers-list
+          .question__bird-audio
+            .question__bird
+              img.question-bird__img(src=require('./assets/icon/bird-black.svg'))
+              p.question-bird__name Птица 1
+            audio.question__audio(controls preload="auto")
+                source
+          p.question__description Прослушайте пение и угадайте птицу
+          .question__container
+            .question__answers-list
+              .answers-list__item one
+              .answers-list__item one
+              .answers-list__item one
+              .answers-list__item one
+              .answers-list__item one
+              .answers-list__item one
+            button.button.question_button-next(hidden) Далее

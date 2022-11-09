@@ -60,10 +60,10 @@ module.exports = {
         }
       },
       {
-        test: /\.(jpe?g|png|webp|gif|svg)$/i,
-        use: [{
+        test: /\.(jpe?g|png|webp|gif|svg|mp3|wav|ogg)$/i,
+/*         use: [{
           loader: 'image-webpack-loader',
-/*           options: {
+          options: {
             mozjpeg: {
               progressive: true,
             },
@@ -83,7 +83,7 @@ module.exports = {
               quality: 75
             }
           },
- */        }],
+        }], */
         type: 'asset/resource',
       },
 /*       {
