@@ -3,23 +3,20 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 
 const mode = process.env.NODE_ENV || 'development';
-const devMode = mode === 'development';
 
-module.exports = {
+const config = {
   mode,
-  // entry: ['@babel/polyfill', './src/index.js'],
   entry: './src/index.js',
-  devtool: devMode ? 'inline-source-map' : undefined,
+  devtool: mode === 'development' ? 'inline-source-map' : undefined,
   output: {
-    filename: 'bundle.js',
+    filename: 'bundle.[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
-    assetModuleFilename: 'assets/[name][ext]'
+    assetModuleFilename: 'assets/[hash].[name][ext]'
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.pug',
-      filename: 'index.html',
       favicon: './src/assets/icon/Favicon.png'
     }),
     new MiniCssExtractPlugin({
@@ -29,29 +26,29 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.html$/i,
+        loader: 'html-loader'
+      },
+      {
         test: /\.s[ac]ss$/i,
         use: [
-          devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+          mode === 'development' ? 'style-loader' : MiniCssExtractPlugin.loader,
           'css-loader',
-          /*           {
-                      loader: 'postcss-loader',
-                      options: {
-                        postcssOptions: {
-                          plugins: [require('postcss-preset-env')]
-                        }
-                      }
-                    }
-                    , */
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [require('postcss-preset-env')]
+              }
+            }
+          },
           'sass-loader',
         ]
       },
       {
         test: /\.pug$/,
-        use: [
-          {
-            loader: "pug-loader",
-          },
-        ],
+        loader: "pug-loader",
+        exclude: /(node_modules|bower_components)/,
       },
       {
         test: /\.woff2?$/i,
@@ -62,47 +59,55 @@ module.exports = {
       },
       {
         test: /\.(jpe?g|png|webp|gif|svg|mp3|wav|ogg)$/i,
-/*         use: [{
-          loader: 'image-webpack-loader',
-          options: {
-            mozjpeg: {
-              progressive: true,
-            },
-            // optipng.enabled: false will disable optipng
-            optipng: {
-              enabled: false,
-            },
-            pngquant: {
-              quality: [0.65, 0.90],
-              speed: 4
-            },
-            gifsicle: {
-              interlaced: false,
-            },
-            // the webp option will enable WEBP
-            webp: {
-              quality: 75
-            }
-          },
-        }], */
         type: 'asset/resource',
       },
-/*       {
-        test: /\.m?js$/,
-        exclude: /(node_modules|bower_components)/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env']
-          }
-        }
-      }
- */    ]
+    ]
   },
   devServer: {
     static: './dist',
-    // watchFiles: {
-    //   paths: 'src/index.pug',
-    // }
   },
 }
+
+if (config.mode !== 'development') {
+  config.entry = ['@babel/polyfill', './src/index.js'];
+
+  delete config.module.rules.at(-1).type;
+  config.module.rules.at(-1).use = [
+    'file-loader',
+    {
+      loader: 'image-webpack-loader',
+      options: {
+        mozjpeg: {
+          progressive: true,
+        },
+        optipng: {
+          enabled: false,
+        },
+        pngquant: {
+          quality: [0.65, 0.90],
+          speed: 4
+        },
+        gifsicle: {
+          interlaced: false,
+        },
+        webp: {
+          quality: 70
+        }
+      }
+    },
+  ];
+
+  config.module.rules.push({
+    test: /\.m?js$/,
+    exclude: /(node_modules|bower_components)/,
+    use: {
+      loader: 'babel-loader',
+      options: {
+        presets: ['@babel/preset-env']
+      }
+    }
+  });
+
+}
+
+module.exports = config;

@@ -1,6 +1,6 @@
 .gratz {
   position: fixed;
-  top: 50%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
@@ -8,6 +8,14 @@
 }
 
 .gratz__text {
-  font-size: 32px;
+  font-size: 64px;
   color: white;
+  font-weight: bold;
+  margin: 0;
+}
+
+.gratz__ura {
+  @extend .gratz__text;
+  font-size: 90px;
+  margin: 0;
 }

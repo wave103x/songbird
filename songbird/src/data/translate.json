@@ -1,0 +1,54 @@
+{
+  "newg": {
+    "ru": "Заново",
+    "en": "New game"
+  },
+  "gallery": {
+    "ru": "Галерея птиц",
+    "en": "Bird gallery"
+  },
+  "whats-on": {
+    "ru": "Что здесь происходит:",
+    "en": "What's going on here?"
+  },
+  "p5": {
+    "ru": "Попытки не ограничены.",
+    "en": "Attempts unlimited."
+  },
+  "p1": {
+    "ru": "Это викторина, здесь вы попробуете угадать птицу по её пению.",
+    "en": "It is a quiz, you are to guess bird name via its voice."
+  },
+  "p2": {
+    "ru": "Узнали с первой попытки - получите 5 баллов.",
+    "en": "Succeded on first attempt - scores 5 points."
+  },
+  "p3": {
+    "ru": "Каждое неверное предположение - минус один балл.",
+    "en": "Minus one point for mistake each."
+  },
+  "p4": {
+    "ru": "Приз только за выполнение без ошибок!",
+    "en": "Gift for full points only!"
+  },
+  "btngreet": {
+    "ru": "Приступить",
+    "en": "go ahead"
+  },
+  "score": {
+    "ru": "счёт:",
+    "en": "score:"
+  },
+  "birdblack": {
+    "ru": "Птица",
+    "en": "Bird"
+  },
+  "bird-descr": {
+    "ru": "Прослушайте пение и угадайте птицу",
+    "en": "Listen to the sounds and guess the bird"
+  },
+  "next": {
+    "ru": "Далее",
+    "en": "Next"
+  }
+}

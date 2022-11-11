@@ -8,17 +8,40 @@
   font-family: Inter, Arial, sans-serif;
   transition: background-color 0.2s;
   letter-spacing: 0.3px;
+  position: relative;
   &:hover {
     background-color: hsla(0, 0%, 100%, 0.1);
   }
+  &::before {
+    content: '';
+    width: 6px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
   &_active_true {
     @extend .button;
-    background-color: green;
     pointer-events: none;
+    color: #32bf59;
+    &::before {
+      background-color: #32bf59;
+    }
   }
   &_active_false {
     @extend .button;
-    background-color: tomato;
     pointer-events: none;
+    &::before {
+      background-color: tomato;
+    }
+  }
+}
+
+.button_gratz {
+  margin-top: 2rem;
+  padding: 16px 24px;
+  background-color: #41a55e;
+  &:hover {
+    background-color: #347547;
   }
 }
