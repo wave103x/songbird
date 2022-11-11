@@ -91,7 +91,7 @@ if (config.mode !== 'development') {
           interlaced: false,
         },
         webp: {
-          quality: 70
+          quality: 75
         }
       }
     },

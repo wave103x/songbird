@@ -2,9 +2,9 @@
   color: white;
   background-color: hsla(0, 0%, 100%, 0.2);
   cursor: pointer;
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   border: none;
-  font-size: 16px;
+  font-size: 1rem;
   font-family: Inter, Arial, sans-serif;
   transition: background-color 0.2s;
   letter-spacing: 0.3px;
@@ -23,6 +23,7 @@
   &_active_true {
     @extend .button;
     pointer-events: none;
+    background-color: hsla(0, 0%, 100%, 0.3);
     color: #32bf59;
     &::before {
       background-color: #32bf59;
@@ -39,7 +40,7 @@
 
 .button_gratz {
   margin-top: 2rem;
-  padding: 16px 24px;
+  padding: 1rem 1.5rem;
   background-color: #41a55e;
   &:hover {
     background-color: #347547;

@@ -31,13 +31,13 @@ const btnGallery = document.querySelector('.header__button_gallery');
 const btnNewGame = document.querySelector('.header__button_new-game');
 const questionBody = document.querySelector('.question__bird-audio');
 
-translateForm.onchange = newGame;
-
 soundLoos.volume = 0.4;
+
+translateForm.onchange = newGame;
 logo.onclick = toStartPage;
 btnNewGame.onclick = newGame;
-// btnGallery.onclick = () => gallery();
-btnGallery.onclick = () => gratz(statsObj);
+btnGallery.onclick = gallery;
+// btnGallery.onclick = () => gratz(statsObj);
 
 //create object with options per question
 const arr = [0, 1, 2, 3, 4, 5];
@@ -56,6 +56,13 @@ btnBegin.onclick = () => {
 }
 
 nextBtn.addEventListener('click', () => {
+  if (statsObj.currentQuestion === 5) {
+    if (localStorage.getItem('lang') === 'en') nextBtn.textContent = 'Get a gift!';
+    else nextBtn.textContent = 'Получить по заслугам!';
+  } else {
+    if (localStorage.getItem('lang') === 'en') nextBtn.textContent = 'Next';
+    else nextBtn.textContent = 'Далее';
+  }
   if (statsObj.currentQuestion === 6) {
     gratz(statsObj);
     return;
@@ -78,7 +85,7 @@ function nextQuestion() {
     e.onclick = null;
     if (localStorage.getItem('lang') === 'en') e.textContent = currentQuestionOptions[index].nameEn;
     else e.textContent = currentQuestionOptions[index].name;
-    e.onclick = (e) => handleOption(e, currentWinner);
+    e.onclick = (e) => handleOption(e, currentWinner, currentQuestionOptions);
     statsObj.currentTry = 0;
   })
 
@@ -102,7 +109,7 @@ function nextQuestion() {
   birdImg.src = birdBlack;
 }
 
-function handleOption(event, currentWinner) {
+function handleOption(event, currentWinner, currentQuestionOptions) {
   const winner = (localStorage.getItem('lang') === 'en') ? currentWinner.nameEn : currentWinner.name;
   if (event.target.textContent === winner) {
     event.target.classList.add('button_active_true');
@@ -120,6 +127,9 @@ function handleOption(event, currentWinner) {
     statsObj.score += 5 - statsObj.currentTry;
     updateScore(statsObj);
     nextBtn.hidden = false;
+
+    showAllBirds(currentQuestionOptions);
+
   } else if (nextBtn.hidden) {
     soundLoos.currentTime = 0;
     soundLoos.play();
@@ -133,20 +143,23 @@ function gratz({ score }) {
   gratz.className = 'gratz';
   const text = document.createElement('p');
   const ura = document.createElement('p');
-  if (localStorage.getItem('lang') === 'en') text.innerHTML = `You managed to get<br>${score} points of 36!`;
-  else text.innerHTML = `У тебя получилось набрать <br>${score} баллов из 36!`;
+  if (localStorage.getItem('lang') === 'en') text.innerHTML = `You managed to get<br>${score} points of 30!`;
+  else text.innerHTML = `У тебя получилось набрать <br>${score} баллов из 30!`;
   text.className = 'gratz__text';
   ura.className = 'gratz__ura';
   if (localStorage.getItem('lang') === 'en') ura.textContent = 'Hooray!';
   else ura.textContent = 'Ура!';
   gratz.append(ura, text);
   const buttonNextTry = document.createElement('button');
+  buttonNextTry.className = 'button button_gratz';
+  gratz.append(buttonNextTry);
+  buttonNextTry.onclick = () => newGame();
   if (score < 30) {
     if (localStorage.getItem('lang') === 'en') buttonNextTry.textContent = 'One more try';
     else buttonNextTry.textContent = 'Попробовать ещё раз';
-    buttonNextTry.className = 'button button_gratz';
-    gratz.append(buttonNextTry);
-    buttonNextTry.onclick = () => newGame();
+  } else {
+    if (localStorage.getItem('lang') === 'en') buttonNextTry.textContent = 'I am good';
+    else buttonNextTry.textContent = 'Я хорош';
   }
   document.body.lastElementChild.style.filter = 'blur(4px)';
   document.body.lastElementChild.style.pointerEvents = 'none';
@@ -169,7 +182,9 @@ function newGame() {
 function toStartPage() {
   greet.hidden = false;
   quiz.hidden = true;
+  window.onclick = null;
   btnNewGame.hidden = true;
+  document.querySelector('.gallery').remove();
 }
 
 function gallery() {
@@ -177,8 +192,10 @@ function gallery() {
   galleryDiv.className = 'gallery';
   document.body.firstElementChild.append(galleryDiv);
   greet.hidden = true;
+  btnNewGame.hidden = true;
   quiz.hidden = true;
   birdsData.forEach((e, index) => {
+    birdImg.classList.remove('question-bird__img_empty')
     birdImg.src = e.image;
     birdDesctiption.textContent = e.description;
     birdName.textContent = e.name;
@@ -188,7 +205,30 @@ function gallery() {
     const btnPlay = document.querySelector('.button_play');
 
     audio = audioPlayer(e.audio, btnPlay);
-    audio.play();
     galleryDiv.append(clone)
+  })
+}
+
+function showAllBirds(currentQuestionOptions) {
+  Array.from(optionsList.children).forEach(e => {
+    e.style.pointerEvents = 'auto';
+    e.onclick = null;
+    e.onclick = () => {
+      const bird = e.textContent;
+      let data;
+      for (const item of currentQuestionOptions) {
+        if (item.name === bird || item.nameEn === bird) data = item;
+      }
+      if (localStorage.getItem('lang') === 'en') {
+        birdDesctiption.textContent = data.descEn;
+        birdName.textContent = data.nameEn;
+      } else {
+        birdDesctiption.textContent = data.description;
+        birdName.textContent = data.name;
+      }
+      birdImg.src = data.image;
+      birdImg.classList.remove('question-bird__img_empty');
+      audioPlayer(data.audio)
+    }
   })
 }
