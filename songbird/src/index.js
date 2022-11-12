@@ -31,23 +31,21 @@ const btnGallery = document.querySelector('.header__button_gallery');
 const btnNewGame = document.querySelector('.header__button_new-game');
 const questionBody = document.querySelector('.question__bird-audio');
 
-soundLoos.volume = 0.4;
 
-translateForm.onchange = newGame;
+soundLoos.volume = 0.4;
+translateForm.onchange = () => {
+  const gallery1 = document.querySelector('.gallery');
+  if (gallery1) {
+    gallery1.remove();
+    gallery();
+  }
+  else newGame();
+}
+
 logo.onclick = toStartPage;
 btnNewGame.onclick = newGame;
 btnGallery.onclick = gallery;
 // btnGallery.onclick = () => gratz(statsObj);
-
-//create object with options per question
-const arr = [0, 1, 2, 3, 4, 5];
-const arrRandom = shuffleArr(arr);
-const objDataBird = {};
-for (let i = 0; i < 6; i++) {
-  const name = 'arr' + arrRandom[i];
-  objDataBird[name] = birdsData.slice(i * 6, i * 6 + 6);
-}
-
 btnBegin.onclick = () => {
   greet.hidden = true;
   newGame();
@@ -70,6 +68,21 @@ nextBtn.addEventListener('click', () => {
   statsObj.currentQuestion++;
   nextQuestion();
 });
+
+
+function newGame() {
+  document.body.lastElementChild.style.filter = null;
+  statsObj.currentQuestion = 1;
+  statsObj.score = 0;
+  statsObj.currentTry = 0;
+  if (document.querySelector('.gratz')) document.querySelector('.gratz').remove();
+  document.body.lastElementChild.style.pointerEvents = 'unset';
+  nextBtn.hidden = true;
+  nextQuestion();
+  updateScore(statsObj);
+}
+
+const objDataBird = createQuestionsOptions(birdsData);
 
 function nextQuestion() {
   //choose random question and shuffle options
@@ -97,7 +110,8 @@ function nextQuestion() {
   })
 
   //set auido track to guess
-  const audio = audioPlayer(currentWinner.audio);
+  const player = audioPlayer(currentWinner.audio);
+  birdDesctiption.before(player);
 
   //reset UI
   nextBtn.hidden = true;
@@ -166,25 +180,14 @@ function gratz({ score }) {
   document.body.prepend(gratz);
 }
 
-function newGame() {
-  document.body.lastElementChild.style.filter = null;
-  statsObj.currentQuestion = 1;
-  statsObj.score = 0;
-  statsObj.currentTry = 0;
-  if (document.querySelector('.gratz')) document.querySelector('.gratz').remove();
-  document.body.lastElementChild.style.pointerEvents = 'unset';
-  nextBtn.hidden = true;
 
-  nextQuestion();
-  updateScore(statsObj);
-}
 
 function toStartPage() {
   greet.hidden = false;
   quiz.hidden = true;
   window.onclick = null;
   btnNewGame.hidden = true;
-  document.querySelector('.gallery').remove();
+  if (document.querySelector('.gallery')) document.querySelector('.gallery').remove();
 }
 
 function gallery() {
@@ -194,18 +197,23 @@ function gallery() {
   greet.hidden = true;
   btnNewGame.hidden = true;
   quiz.hidden = true;
-  birdsData.forEach((e, index) => {
+  const player = document.querySelector('.audio-player');
+  if (player) player.remove();
+
+  birdsData.forEach((e) => {
     birdImg.classList.remove('question-bird__img_empty')
     birdImg.src = e.image;
-    birdDesctiption.textContent = e.description;
-    birdName.textContent = e.name;
+    if (localStorage.getItem('lang') === 'en') {
+      birdDesctiption.textContent = e.descEn;
+      birdName.textContent = e.nameEn;
+    } else {
+      birdDesctiption.textContent = e.description;
+      birdName.textContent = e.name;
+    }
     const clone = questionBody.cloneNode(true);
-    let audio = clone.lastElementChild.firstElementChild.firstElementChild;
-
-    const btnPlay = document.querySelector('.button_play');
-
-    audio = audioPlayer(e.audio, btnPlay);
-    galleryDiv.append(clone)
+    galleryDiv.append(clone);
+    const player = audioPlayer(e.audio);
+    clone.lastElementChild.prepend(player)
   })
 }
 
@@ -231,4 +239,16 @@ function showAllBirds(currentQuestionOptions) {
       audioPlayer(data.audio)
     }
   })
+}
+
+
+function createQuestionsOptions(birdsData) {
+  const arr = [0, 1, 2, 3, 4, 5];
+  const arrRandom = shuffleArr(arr);
+  const objDataBird = {};
+  for (let i = 0; i < 6; i++) {
+    const name = 'arr' + arrRandom[i];
+    objDataBird[name] = birdsData.slice(i * 6, i * 6 + 6);
+  }
+  return objDataBird;
 }
