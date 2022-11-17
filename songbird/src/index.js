@@ -33,6 +33,7 @@ const statsObj = {
 
 let lang = localStorage.getItem('lang') === 'en' ? true : false;
 soundLoos.volume = 0.4;
+
 translateForm.onchange = () => {
   lang = localStorage.getItem('lang') === 'en' ? true : false;
   const gallery1 = document.querySelector('.gallery');
@@ -91,6 +92,12 @@ function nextQuestion() {
   let currentWinner = currentQuestionOptions[randomInteger(0, 5)];
   console.log('w0w you are hascker!', currentWinner.name);
 
+  //set auido track to guess
+  const playerOld = document.querySelector('.audio-player');
+  if (playerOld) playerOld.remove();
+  const player = audioPlayer(currentWinner.audio);
+  player.onload = birdDesctiption.before(player);
+
   //write option names to buttons, handle events on options click
   Array.from(optionsList.children).forEach((e, index) => {
     e.classList.remove('button_active_false');
@@ -98,7 +105,7 @@ function nextQuestion() {
     e.onclick = null;
     if (lang) e.textContent = currentQuestionOptions[index].nameEn;
     else e.textContent = currentQuestionOptions[index].name;
-    e.onclick = (e) => handleOption(e, currentWinner, currentQuestionOptions);
+    e.onclick = (e) => handleOption(e, currentWinner, currentQuestionOptions, player);
     statsObj.currentTry = 0;
   })
 
@@ -108,12 +115,6 @@ function nextQuestion() {
     if (index === statsObj.currentQuestion * 2 - 2) e.classList.add('question-list__item_active');
     else e.classList.remove('question-list__item_active');
   })
-
-  //set auido track to guess
-  const playerOld = document.querySelector('.audio-player');
-  if (playerOld) playerOld.remove();
-  const player = audioPlayer(currentWinner.audio);
-  player.onload = birdDesctiption.before(player);
 
   //reset UI
   nextBtn.hidden = true;
@@ -125,17 +126,17 @@ function nextQuestion() {
   birdImg.src = birdBlack;
 }
 
-function handleOption(event, currentWinner, currentQuestionOptions) {
+function handleOption(event, currentWinner, currentQuestionOptions, player) {
   const winner = (lang) ? currentWinner.nameEn : currentWinner.name;
   if (event.target.textContent === winner) {
     event.target.classList.add('button_active_true');
-    uncoverBird(currentWinner)
     soundVict.play();
     statsObj.score += 5 - statsObj.currentTry;
-    updateScore(statsObj);
     nextBtn.hidden = false;
-
+    uncoverBird(currentWinner);
+    updateScore(statsObj);
     showAllBirds(currentQuestionOptions);
+    player.firstElementChild.pause();
 
   } else if (nextBtn.hidden) {
     const [clickedBird] = Array.from(currentQuestionOptions).filter(e => e.name === event.target.textContent || e.nameEn === event.target.textContent)

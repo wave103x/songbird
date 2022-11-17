@@ -56,7 +56,7 @@ function audioPlayer(url) {
   })
 
   progress.addEventListener('change', () => {
-    btnPlayIcon.src = pauseSvg;
+    // btnPlayIcon.src = pauseSvg;
     audio.currentTime = progress.value;
   })
 
@@ -73,14 +73,20 @@ function audioPlayer(url) {
     audio.volume = volume.value / 100;
   })
 
+  audio.onpause = () => {
+    btnPlayIcon.src = playSvg;
+  }
+
+  audio.onplay = () => {
+    btnPlayIcon.src = pauseSvg;
+  }
+
 
   function playPause() {
     if (audio.paused) {
       audio.play()
-      btnPlayIcon.src = pauseSvg;
     } else {
       audio.pause()
-      btnPlayIcon.src = playSvg;
     }
   }
 
