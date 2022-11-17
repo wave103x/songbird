@@ -9,12 +9,6 @@ import soundLoose from './assets/audio/loose1.mp3';
 import audioPlayer from './modules/audioPlayer';
 import translateForm from './modules/translate';
 
-const statsObj = {
-  currentQuestion: 1,
-  score: 0,
-  currentTry: 0,
-}
-
 const logo = document.querySelector('.logo');
 const btnBegin = document.querySelector('.greet_button');
 const greet = document.querySelector('.greet');
@@ -31,9 +25,16 @@ const btnGallery = document.querySelector('.header__button_gallery');
 const btnNewGame = document.querySelector('.header__button_new-game');
 const questionBody = document.querySelector('.question__bird-audio');
 
+const statsObj = {
+  currentQuestion: 1,
+  score: 0,
+  currentTry: 0,
+}
 
+let lang = localStorage.getItem('lang') === 'en' ? true : false;
 soundLoos.volume = 0.4;
 translateForm.onchange = () => {
+  lang = localStorage.getItem('lang') === 'en' ? true : false;
   const gallery1 = document.querySelector('.gallery');
   if (gallery1) {
     gallery1.remove();
@@ -45,7 +46,6 @@ translateForm.onchange = () => {
 logo.onclick = toStartPage;
 btnNewGame.onclick = newGame;
 btnGallery.onclick = gallery;
-// btnGallery.onclick = () => gratz(statsObj);
 btnBegin.onclick = () => {
   greet.hidden = true;
   newGame();
@@ -55,10 +55,10 @@ btnBegin.onclick = () => {
 
 nextBtn.addEventListener('click', () => {
   if (statsObj.currentQuestion === 5) {
-    if (localStorage.getItem('lang') === 'en') nextBtn.textContent = 'Get a gift!';
+    if (lang) nextBtn.textContent = 'Get a gift!';
     else nextBtn.textContent = 'Получить по заслугам!';
   } else {
-    if (localStorage.getItem('lang') === 'en') nextBtn.textContent = 'Next';
+    if (lang) nextBtn.textContent = 'Next';
     else nextBtn.textContent = 'Далее';
   }
   if (statsObj.currentQuestion === 6) {
@@ -72,6 +72,7 @@ nextBtn.addEventListener('click', () => {
 
 function newGame() {
   document.body.lastElementChild.style.filter = null;
+  statsObj.objDataBird = createQuestionsOptions(birdsData);
   statsObj.currentQuestion = 1;
   statsObj.score = 0;
   statsObj.currentTry = 0;
@@ -82,12 +83,11 @@ function newGame() {
   updateScore(statsObj);
 }
 
-const objDataBird = createQuestionsOptions(birdsData);
 
 function nextQuestion() {
   //choose random question and shuffle options
   let currentQuestionArr = 'arr' + (statsObj.currentQuestion - 1);
-  let currentQuestionOptions = shuffleArr(objDataBird[currentQuestionArr]);
+  let currentQuestionOptions = shuffleArr(statsObj.objDataBird[currentQuestionArr]);
   let currentWinner = currentQuestionOptions[randomInteger(0, 5)];
   console.log('w0w you are hascker!', currentWinner.name);
 
@@ -96,7 +96,7 @@ function nextQuestion() {
     e.classList.remove('button_active_false');
     e.classList.remove('button_active_true');
     e.onclick = null;
-    if (localStorage.getItem('lang') === 'en') e.textContent = currentQuestionOptions[index].nameEn;
+    if (lang) e.textContent = currentQuestionOptions[index].nameEn;
     else e.textContent = currentQuestionOptions[index].name;
     e.onclick = (e) => handleOption(e, currentWinner, currentQuestionOptions);
     statsObj.currentTry = 0;
@@ -110,33 +110,26 @@ function nextQuestion() {
   })
 
   //set auido track to guess
+  const playerOld = document.querySelector('.audio-player');
+  if (playerOld) playerOld.remove();
   const player = audioPlayer(currentWinner.audio);
-  birdDesctiption.before(player);
+  player.onload = birdDesctiption.before(player);
 
   //reset UI
   nextBtn.hidden = true;
-  if (localStorage.getItem('lang') === 'en') birdName.textContent = 'Bird ' + statsObj.currentQuestion;
+  if (lang) birdName.textContent = 'Bird ' + statsObj.currentQuestion;
   else birdName.textContent = 'Птица ' + statsObj.currentQuestion;
-  if (localStorage.getItem('lang') === 'en') birdDesctiption.textContent = 'Listen to the sounds and guess the bird';
+  if (lang) birdDesctiption.textContent = 'Listen to the sounds and guess the bird';
   else birdDesctiption.textContent = 'Прослушайте пение и угадайте птицу';
   birdImg.classList.add('question-bird__img_empty');
   birdImg.src = birdBlack;
 }
 
 function handleOption(event, currentWinner, currentQuestionOptions) {
-  const winner = (localStorage.getItem('lang') === 'en') ? currentWinner.nameEn : currentWinner.name;
+  const winner = (lang) ? currentWinner.nameEn : currentWinner.name;
   if (event.target.textContent === winner) {
     event.target.classList.add('button_active_true');
-    if (localStorage.getItem('lang') === 'en') {
-      birdDesctiption.textContent = currentWinner.descEn;
-      birdName.textContent = currentWinner.nameEn;
-    } else {
-      birdDesctiption.textContent = currentWinner.description;
-      birdName.textContent = currentWinner.name;
-    }
-    birdImg.src = currentWinner.image;
-    birdImg.classList.remove('question-bird__img_empty');
-
+    uncoverBird(currentWinner)
     soundVict.play();
     statsObj.score += 5 - statsObj.currentTry;
     updateScore(statsObj);
@@ -145,6 +138,8 @@ function handleOption(event, currentWinner, currentQuestionOptions) {
     showAllBirds(currentQuestionOptions);
 
   } else if (nextBtn.hidden) {
+    const [clickedBird] = Array.from(currentQuestionOptions).filter(e => e.name === event.target.textContent || e.nameEn === event.target.textContent)
+    uncoverBird(clickedBird)
     soundLoos.currentTime = 0;
     soundLoos.play();
     event.target.classList.add('button_active_false')
@@ -157,11 +152,11 @@ function gratz({ score }) {
   gratz.className = 'gratz';
   const text = document.createElement('p');
   const ura = document.createElement('p');
-  if (localStorage.getItem('lang') === 'en') text.innerHTML = `You managed to get<br>${score} points of 30!`;
+  if (lang) text.innerHTML = `You managed to get<br>${score} points of 30!`;
   else text.innerHTML = `У тебя получилось набрать <br>${score} баллов из 30!`;
   text.className = 'gratz__text';
   ura.className = 'gratz__ura';
-  if (localStorage.getItem('lang') === 'en') ura.textContent = 'Hooray!';
+  if (lang) ura.textContent = 'Hooray!';
   else ura.textContent = 'Ура!';
   gratz.append(ura, text);
   const buttonNextTry = document.createElement('button');
@@ -169,17 +164,16 @@ function gratz({ score }) {
   gratz.append(buttonNextTry);
   buttonNextTry.onclick = () => newGame();
   if (score < 30) {
-    if (localStorage.getItem('lang') === 'en') buttonNextTry.textContent = 'One more try';
+    if (lang) buttonNextTry.textContent = 'One more try';
     else buttonNextTry.textContent = 'Попробовать ещё раз';
   } else {
-    if (localStorage.getItem('lang') === 'en') buttonNextTry.textContent = 'I am good';
+    if (lang) buttonNextTry.textContent = 'I am good';
     else buttonNextTry.textContent = 'Я хорош';
   }
   document.body.lastElementChild.style.filter = 'blur(4px)';
   document.body.lastElementChild.style.pointerEvents = 'none';
   document.body.prepend(gratz);
 }
-
 
 
 function toStartPage() {
@@ -201,15 +195,7 @@ function gallery() {
   if (player) player.remove();
 
   birdsData.forEach((e) => {
-    birdImg.classList.remove('question-bird__img_empty')
-    birdImg.src = e.image;
-    if (localStorage.getItem('lang') === 'en') {
-      birdDesctiption.textContent = e.descEn;
-      birdName.textContent = e.nameEn;
-    } else {
-      birdDesctiption.textContent = e.description;
-      birdName.textContent = e.name;
-    }
+    uncoverBird(e)
     const clone = questionBody.cloneNode(true);
     galleryDiv.append(clone);
     const player = audioPlayer(e.audio);
@@ -223,24 +209,15 @@ function showAllBirds(currentQuestionOptions) {
     e.onclick = null;
     e.onclick = () => {
       const bird = e.textContent;
-      let data;
+      let birdObj;
       for (const item of currentQuestionOptions) {
-        if (item.name === bird || item.nameEn === bird) data = item;
+        if (item.name === bird || item.nameEn === bird) birdObj = item;
       }
-      if (localStorage.getItem('lang') === 'en') {
-        birdDesctiption.textContent = data.descEn;
-        birdName.textContent = data.nameEn;
-      } else {
-        birdDesctiption.textContent = data.description;
-        birdName.textContent = data.name;
-      }
-      birdImg.src = data.image;
-      birdImg.classList.remove('question-bird__img_empty');
-      audioPlayer(data.audio)
+      uncoverBird(birdObj)
+      audioPlayer(birdObj.audio)
     }
   })
 }
-
 
 function createQuestionsOptions(birdsData) {
   const arr = [0, 1, 2, 3, 4, 5];
@@ -251,4 +228,16 @@ function createQuestionsOptions(birdsData) {
     objDataBird[name] = birdsData.slice(i * 6, i * 6 + 6);
   }
   return objDataBird;
+}
+
+function uncoverBird(birdObj) {
+  if (lang) {
+    birdDesctiption.textContent = birdObj.descEn;
+    birdName.textContent = birdObj.nameEn;
+  } else {
+    birdDesctiption.textContent = birdObj.description;
+    birdName.textContent = birdObj.name;
+  }
+  birdImg.src = birdObj.image;
+  birdImg.classList.remove('question-bird__img_empty');
 }

@@ -1,11 +1,6 @@
 import birdsData from '../data/birdsData.json';
-
-// const audio = document.querySelector('.my-audio');
-// const currentTimeDiv = document.querySelector('.current-time')
-// const durationTime = document.querySelector('.duration-time')
-// const volume = document.querySelector('.volume')
-// const progress = document.querySelector('.progress');
-// const btnPlay = document.querySelector('.button_play');
+import playSvg from '../assets/icon/play.svg'
+import pauseSvg from '../assets/icon/pause.svg'
 
 function audioPlayer(url) {
 
@@ -21,8 +16,13 @@ function audioPlayer(url) {
   timer.className = 'timer';
   const btnPlay = document.createElement('button');
   btnPlay.className = 'button_play';
-  const btnSpan = document.createElement('span');
-  btnSpan.className = 'material-symbols-outlined';
+
+  const btnPlayIcon = document.createElement('img');
+  btnPlayIcon.src = playSvg;
+  const btnPauseIcon = document.createElement('img');
+  btnPauseIcon.src = pauseSvg;
+
+
   const progress = document.createElement('input');
   progress.setAttribute('type', 'range');
   progress.className = 'progress';
@@ -34,7 +34,7 @@ function audioPlayer(url) {
   currentTimeDiv.className = 'current-time';
   const durationTime = document.createElement('span');
   durationTime.className = 'duration-time';
-  btnPlay.append(btnSpan);
+  btnPlay.append(btnPlayIcon);
   timer.append(currentTimeDiv, durationTime);
   timebar.append(progress, timer,volume);
   controls.append(btnPlay, timebar);
@@ -42,7 +42,6 @@ function audioPlayer(url) {
 
   audio.src = url;
   audio.addEventListener('loadedmetadata', () => {
-    btnPlay.firstElementChild.textContent = 'play_circle';
     progress.max = Math.floor(audio.duration);
     progress.value = 0;
     durationTime.textContent = calcTime(audio.duration);
@@ -57,7 +56,7 @@ function audioPlayer(url) {
   })
 
   progress.addEventListener('change', () => {
-    btnPlay.firstElementChild.textContent = 'pause_circle';
+    btnPlayIcon.src = pauseSvg;
     audio.currentTime = progress.value;
   })
 
@@ -78,10 +77,10 @@ function audioPlayer(url) {
   function playPause() {
     if (audio.paused) {
       audio.play()
-      btnPlay.firstElementChild.textContent = 'pause_circle';
+      btnPlayIcon.src = pauseSvg;
     } else {
       audio.pause()
-      btnPlay.firstElementChild.textContent = 'play_circle';
+      btnPlayIcon.src = playSvg;
     }
   }
 

@@ -11,15 +11,15 @@ if (localStorage.getItem('lang') && localStorage.getItem('lang') === 'en') {
 form.addEventListener('change', () => {
   const target = event.target.closest('input');
   if (!target) return;
-  const lang = target.value;
-  changeLang(lang);
+  const language = target.value;
+  changeLang(language);
 });
 
-function changeLang(lang) {
-  localStorage.setItem('lang', lang)
+function changeLang(language) {
+  localStorage.setItem('lang', language)
   for (const item in langData) {
     try {
-      document.querySelector(`.lng-${item}`).textContent = langData[item][lang];
+      document.querySelector(`.lng-${item}`).textContent = langData[item][language];
     } catch(err) {
       console.log(err)
     }
