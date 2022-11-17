@@ -12,7 +12,7 @@ const config = {
     filename: 'bundle.[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
-    assetModuleFilename: 'assets/[hash].[name][ext]'
+    assetModuleFilename: 'assets/[name][ext]'
   },
   plugins: [
     new HtmlWebpackPlugin({

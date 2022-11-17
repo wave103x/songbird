@@ -46,7 +46,6 @@ html(lang="ru")
               img(class="question-bird__img" width="200" height="200")
               p.question-bird__name.lng-birdblack Птица 1
             .question__audio-description
-              //- include pug/_audio
               p.question__description.lng-bird-descr Прослушайте пение и угадайте птицу
           .question__container
             .question__answers-list
@@ -57,3 +56,7 @@ html(lang="ru")
               .answers-list__item one
               .answers-list__item one
             button.button.question__button-next.lng-next.question__button-next_inactive Далее
+    footer.footer
+      span ©2022
+      a(href="https://github.com/wave103x"): img.git(src=require('./assets/icon/githubLogo.svg').default)
+      a(href="https://rs.school/js/"): img.rs-logo(src=require('./assets/icon/rs_school_js.svg').default)

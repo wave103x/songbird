@@ -1,4 +1,3 @@
-import birdsData from '../data/birdsData.json';
 import playSvg from '../assets/icon/play.svg'
 import pauseSvg from '../assets/icon/pause.svg'
 

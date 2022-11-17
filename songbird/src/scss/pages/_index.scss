@@ -251,6 +251,19 @@ body {
   }
 }
 
+.footer {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  color: #999;
+  gap: 1rem;
+  display: flex;
+  align-items: flex-end;
+  img {
+    width: 60px;
+  }
+}
+
 @media screen and (max-width: 600px) {
   html {
     font-size: 14px;
@@ -260,14 +273,14 @@ body {
     display: none;
   }
 
-  .question__bird-audio {
-    // flex-wrap: wrap;
-  }
-
   .gift {
     position: relative;
     margin-top: 2rem;
     z-index: 1;
+  }
+  .footer {
+    position: relative;
+    margin: 1rem;
   }
   .question-list {
     margin-left: unset;
@@ -291,7 +304,10 @@ body {
     gap: 1rem;
   }
   .question__container {
-    gap: 0;
+    gap: 1rem;
+  }
+  .question__button-next_mobile {
+    order: -1;
   }
   .greet_button {
     position: fixed;

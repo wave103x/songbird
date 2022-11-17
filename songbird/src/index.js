@@ -7,7 +7,7 @@ import randomInteger from './utils/randomInteger';
 import soundVictory from './assets/audio/win.mp3';
 import soundLoose from './assets/audio/loose1.mp3';
 import audioPlayer from './modules/audioPlayer';
-import translateForm from './modules/translate';
+import { form as translateForm, lang } from './modules/translate';
 import qbokSvg from './assets/icon/qbok.svg';
 
 const logo = document.querySelector('.logo');
@@ -25,6 +25,7 @@ const questionList = document.querySelector('.question-list');
 const btnGallery = document.querySelector('.header__button_gallery');
 const btnNewGame = document.querySelector('.header__button_new-game');
 const questionBody = document.querySelector('.question__bird-audio');
+const livePlayers = document.getElementsByClassName('audio-player')
 
 const statsObj = {
   currentQuestion: 1,
@@ -37,14 +38,12 @@ if (localStorage.getItem('winCount')) {
   createGift(winCount);
 }
 
-let lang = localStorage.getItem('lang') === 'en' ? true : false;
 soundLoos.volume = 0.4;
 
 translateForm.onchange = () => {
-  lang = localStorage.getItem('lang') === 'en' ? true : false;
-  const gallery1 = document.querySelector('.gallery');
-  if (gallery1) {
-    gallery1.remove();
+  const gallery = document.querySelector('.gallery');
+  if (gallery) {
+    gallery.remove();
     showGallery();
   }
   else newGame();
@@ -53,7 +52,6 @@ translateForm.onchange = () => {
 logo.onclick = toStartPage;
 btnNewGame.onclick = newGame;
 btnGallery.onclick = showGallery;
-// btnGallery.onclick = () => gratz(statsObj);
 btnBegin.onclick = () => {
   greet.hidden = true;
   newGame();
@@ -65,7 +63,6 @@ nextBtn.addEventListener('click', () => {
 
   if (statsObj.currentQuestion === 6) {
     gratz(statsObj);
-    // nextBtn.hidden = true;
     nextBtn.classList.add('question__button-next_inactive')
     return;
   }
@@ -84,16 +81,17 @@ function newGame() {
 }
 
 function nextQuestion() {
+  window.scrollTo(0, 0);
   //choose random question and shuffle options
   let currentQuestionArr = 'arr' + (statsObj.currentQuestion - 1);
   let currentQuestionOptions = shuffleArr(statsObj.objDataBird[currentQuestionArr]);
   let currentWinner = currentQuestionOptions[randomInteger(0, 5)];
 
   //set auido track to guess
-  const playerOld = document.querySelector('.audio-player');
-  if (playerOld) playerOld.remove();
+
+  if (livePlayers.length) livePlayers.item(0).remove();
   const player = audioPlayer(currentWinner.audio);
-  player.onload = birdDesctiption.before(player);
+  birdDesctiption.before(player);
 
   //write option names to buttons, handle events on options click
   Array.from(optionsList.children).forEach((e, index) => {
@@ -114,23 +112,25 @@ function nextQuestion() {
   })
 
   //reset UI
-  // nextBtn.hidden = true;
-  nextBtn.classList.add('question__button-next_inactive')
+  nextBtn.classList.add('question__button-next_inactive');
+  nextBtn.classList.remove('question__button-next_mobile');
   if (lang) birdName.textContent = 'Bird ' + statsObj.currentQuestion;
   else birdName.textContent = 'Птица ' + statsObj.currentQuestion;
   if (lang) birdDesctiption.textContent = 'Listen to the sounds and guess the bird';
   else birdDesctiption.textContent = 'Прослушайте пение и угадайте птицу';
   birdImg.classList.add('question-bird__img_empty');
   birdImg.src = birdBlack;
+
+  console.log(currentWinner.nameEn, currentWinner.name);
 }
 
 function handleOption(event, currentWinner, currentQuestionOptions, player) {
   const winner = (lang) ? currentWinner.nameEn : currentWinner.name;
   if (event.target.textContent === winner) {
+    nextBtn.classList.add('question__button-next_mobile');
     event.target.classList.add('button_active_true');
     soundVict.play();
     statsObj.score += 5 - statsObj.currentTry;
-    // nextBtn.hidden = false;
     nextBtn.classList.remove('question__button-next_inactive');
     uncoverBird(currentWinner);
     updateScore(statsObj);
@@ -143,7 +143,7 @@ function handleOption(event, currentWinner, currentQuestionOptions, player) {
       if (lang) nextBtn.textContent = 'Next';
       else nextBtn.textContent = 'Далее';
     }
-  } else  {
+  } else {
     const [clickedBird] = Array.from(currentQuestionOptions).filter(e => e.name === event.target.textContent || e.nameEn === event.target.textContent)
     uncoverBird(clickedBird)
     soundLoos.currentTime = 0;
@@ -162,14 +162,16 @@ function toStartPage() {
 }
 
 function showGallery() {
+  if (document.querySelector('.gallery')) document.querySelector('.gallery').remove();
   const galleryDiv = document.createElement('article');
   galleryDiv.className = 'gallery';
   document.body.firstElementChild.append(galleryDiv);
   greet.hidden = true;
   btnNewGame.hidden = true;
   quiz.hidden = true;
-  const player = document.querySelector('.audio-player');
-  if (player) player.remove();
+  // const player = document.querySelector('.audio-player');
+  // if (player) player.remove();
+  if (livePlayers.length) livePlayers.item(0).remove();
 
   birdsData.forEach((e) => {
     uncoverBird(e)
@@ -178,7 +180,7 @@ function showGallery() {
     const player = audioPlayer(e.audio);
     clone.lastElementChild.prepend(player)
   })
-  makeForest ()
+  makeForest()
 }
 
 function showAllBirds(currentQuestionOptions) {
@@ -191,8 +193,10 @@ function showAllBirds(currentQuestionOptions) {
       for (const item of currentQuestionOptions) {
         if (item.name === bird || item.nameEn === bird) birdObj = item;
       }
-      uncoverBird(birdObj)
-      audioPlayer(birdObj.audio)
+      uncoverBird(birdObj);
+      livePlayers.item(0).remove();
+      const player = audioPlayer(birdObj.audio);
+      birdDesctiption.before(player);
     }
   })
 }
@@ -285,7 +289,7 @@ function createGift(winCount = '1') {
   gift.dataset.place = winCount;
 }
 
-function makeForest () {
+function makeForest() {
   const audios = document.querySelectorAll('audio');
   const SINGERS_COUNT = 3;
   const buttonStart = document.createElement('button')
@@ -314,7 +318,7 @@ function makeForest () {
     })
     const singers = [];
     singersText.innerHTML = '';
-    for(let i = 0; i < SINGERS_COUNT; i++) {
+    for (let i = 0; i < SINGERS_COUNT; i++) {
       singers.push(randomInteger(0, audios.length - 1))
       audios[singers[i]].play();
       singersText.innerHTML += audios[singers[i]].closest('.question__bird-audio').firstElementChild.lastElementChild.textContent + ' ';
