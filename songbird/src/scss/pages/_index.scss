@@ -27,7 +27,11 @@ body {
 }
 
 .header__button_gallery {
-  background-color: #139d59;
+  // border: 2px solid #139d59;
+  background-color: transparent;
+  outline: 2px solid #139d59;
+  outline-offset: -2px;
+  box-sizing: border-box;
 
   &:hover {
     background-color: #1c7549;
@@ -35,7 +39,7 @@ body {
 }
 
 .logo {
-  font-size: calc(26px + 1vw);
+  font-size: calc(32px + 1vw);
   margin: 0;
   font-weight: 600;
   color: white;
@@ -64,6 +68,10 @@ body {
 .greet_button {
   margin-top: 1rem;
   padding: 0.75rem 1.5rem;
+  background-color: #41a55e;
+  &:hover {
+    background-color: #347547;
+  }
 }
 
 .quiz__header {
@@ -203,6 +211,11 @@ body {
   cursor: pointer;
   color: #bdbdbd;
   padding: 0.5rem;
+  transition: 0.2s;
+  border-top: 1px solid transparent;
+  &:hover {
+    border-top: 1px solid white;
+  }
 }
 
 
@@ -253,13 +266,20 @@ body {
   .gift {
     position: relative;
     margin-top: 2rem;
+    z-index: 1;
   }
-
-}
-
-@media screen and (max-width: 320px) {
   .question-list {
     margin-left: unset;
   }
 
+}
+
+@media screen and (max-width: 480px) {
+  .greet_button {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+  }
 }

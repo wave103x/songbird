@@ -34,7 +34,7 @@ const statsObj = {
 let winCount = 0;
 if (localStorage.getItem('winCount')) {
   winCount = localStorage.getItem('winCount');
-  createGift(winCount)
+  createGift(winCount);
 }
 
 let lang = localStorage.getItem('lang') === 'en' ? true : false;
@@ -88,7 +88,6 @@ function nextQuestion() {
   let currentQuestionArr = 'arr' + (statsObj.currentQuestion - 1);
   let currentQuestionOptions = shuffleArr(statsObj.objDataBird[currentQuestionArr]);
   let currentWinner = currentQuestionOptions[randomInteger(0, 5)];
-  console.log('w0w you are hascker!', currentWinner.nameEn, currentWinner.name);
 
   //set auido track to guess
   const playerOld = document.querySelector('.audio-player');
@@ -179,6 +178,7 @@ function showGallery() {
     const player = audioPlayer(e.audio);
     clone.lastElementChild.prepend(player)
   })
+  makeForest ()
 }
 
 function showAllBirds(currentQuestionOptions) {
@@ -283,4 +283,50 @@ function createGift(winCount = '1') {
   document.body.append(gift);
   gift.append(qbok);
   gift.dataset.place = winCount;
+}
+
+function makeForest () {
+  const audios = document.querySelectorAll('audio');
+  const SINGERS_COUNT = 3;
+  const buttonStart = document.createElement('button')
+  buttonStart.className = 'button lng-forestBtn';
+  buttonStart.style.marginBottom = '1rem';
+  buttonStart.style.marginRight = '1rem';
+  if (lang) buttonStart.textContent = 'Forest sounds';
+  else buttonStart.textContent = 'Звуки леса';
+
+  const buttonStop = document.createElement('button')
+  buttonStop.className = 'button lng-forestBtnStop';
+  buttonStop.style.marginRight = '1rem';
+  buttonStop.style.marginBottom = '1rem';
+  if (lang) buttonStop.textContent = 'Stop';
+  else buttonStop.textContent = 'Стоп';
+
+  const singersText = document.createElement('span');
+  singersText.style.opacity = '0.7';
+
+  document.body.firstElementChild.lastElementChild.prepend(buttonStart, buttonStop, singersText);
+
+  buttonStart.onclick = () => {
+    audios.forEach((e) => {
+      e.currentTime = 0;
+      e.pause();
+    })
+    const singers = [];
+    singersText.innerHTML = '';
+    for(let i = 0; i < SINGERS_COUNT; i++) {
+      singers.push(randomInteger(0, audios.length - 1))
+      audios[singers[i]].play();
+      singersText.innerHTML += audios[singers[i]].closest('.question__bird-audio').firstElementChild.lastElementChild.textContent + ' ';
+    }
+  }
+
+  buttonStop.onclick = () => {
+    singersText.innerHTML = '';
+    audios.forEach((e) => {
+      e.currentTime = 0;
+      e.pause();
+    })
+  }
+
 }
