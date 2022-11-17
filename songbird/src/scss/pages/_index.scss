@@ -169,6 +169,7 @@ body {
     background-color: hsl(0, 0%, 12%);
     box-shadow: inset 0 0 8px hsl(0, 0%, 5%);
     padding: 2rem;
+    object-fit: none;
   }
 }
 
@@ -260,7 +261,7 @@ body {
   }
 
   .question__bird-audio {
-    flex-wrap: wrap;
+    // flex-wrap: wrap;
   }
 
   .gift {
@@ -275,11 +276,31 @@ body {
 }
 
 @media screen and (max-width: 480px) {
+  .question__bird-audio {
+    flex-direction: column;
+    margin-bottom: 1rem;
+  }
+  .question-bird__img {
+    width: 100%;
+    object-fit: cover;
+  }
+  .question-bird__img_empty {
+    object-fit: none;
+  }
+  .question__bird-audio {
+    gap: 1rem;
+  }
+  .question__container {
+    gap: 0;
+  }
   .greet_button {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
     z-index: 2;
+  }
+  .quiz__header {
+    margin-bottom: 1rem;
   }
 }
