@@ -15,11 +15,11 @@ html(lang="ru")
         button.button.header__button_new-game.lng-newg(hidden) Заново
         button.button.header__button_gallery.lng-gallery Галерея птиц
       article.greet
-        img(class="greet__banner" src=require('./assets/image/bird-banner.webp').default)
+        img(class="greet__banner" src=require('./assets/image/bird-banner.webp'))
         h2.greet__heading.lng-whats-on Что здесь происходит:
         p.lng-p1 Это викторина, здесь вы попробуете угадать птицу по её пению.
-        p.lng-p2 Узнали с первой попытки - получите 5 баллов.
-        p.lng-p3 Каждое неверное предположение - минус один балл.
+        p.lng-p2 Узнали с первой попытки — получите 5 баллов.
+        p.lng-p3 Каждое неверное предположение — минус один балл.
         p.lng-p4 Приз только за выполнение без ошибок!
         p.lng-p5 Попытки не ограничены.
         button.button.greet_button.lng-btngreet Приступить
@@ -56,4 +56,4 @@ html(lang="ru")
               .answers-list__item one
               .answers-list__item one
               .answers-list__item one
-            button.button.question_button-next.lng-next(hidden) Далее
+            button.button.question__button-next.lng-next.question__button-next_inactive Далее

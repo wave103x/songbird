@@ -8,6 +8,7 @@ import soundVictory from './assets/audio/win.mp3';
 import soundLoose from './assets/audio/loose1.mp3';
 import audioPlayer from './modules/audioPlayer';
 import translateForm from './modules/translate';
+import qbokSvg from './assets/icon/qbok.svg';
 
 const logo = document.querySelector('.logo');
 const btnBegin = document.querySelector('.greet_button');
@@ -19,7 +20,7 @@ const birdImg = document.querySelector('.question-bird__img');
 const soundVict = new Audio(soundVictory);
 const soundLoos = new Audio(soundLoose);
 const optionsList = document.querySelector('.question__answers-list');
-const nextBtn = document.querySelector('.question_button-next');
+const nextBtn = document.querySelector('.question__button-next');
 const questionList = document.querySelector('.question-list');
 const btnGallery = document.querySelector('.header__button_gallery');
 const btnNewGame = document.querySelector('.header__button_new-game');
@@ -30,6 +31,11 @@ const statsObj = {
   score: 0,
   currentTry: 0,
 }
+let winCount = 0;
+if (localStorage.getItem('winCount')) {
+  winCount = localStorage.getItem('winCount');
+  createGift(winCount)
+}
 
 let lang = localStorage.getItem('lang') === 'en' ? true : false;
 soundLoos.volume = 0.4;
@@ -39,14 +45,15 @@ translateForm.onchange = () => {
   const gallery1 = document.querySelector('.gallery');
   if (gallery1) {
     gallery1.remove();
-    gallery();
+    showGallery();
   }
   else newGame();
 }
 
 logo.onclick = toStartPage;
 btnNewGame.onclick = newGame;
-btnGallery.onclick = gallery;
+btnGallery.onclick = showGallery;
+// btnGallery.onclick = () => gratz(statsObj);
 btnBegin.onclick = () => {
   greet.hidden = true;
   newGame();
@@ -55,15 +62,11 @@ btnBegin.onclick = () => {
 }
 
 nextBtn.addEventListener('click', () => {
-  if (statsObj.currentQuestion === 5) {
-    if (lang) nextBtn.textContent = 'Get a gift!';
-    else nextBtn.textContent = 'Получить по заслугам!';
-  } else {
-    if (lang) nextBtn.textContent = 'Next';
-    else nextBtn.textContent = 'Далее';
-  }
+
   if (statsObj.currentQuestion === 6) {
     gratz(statsObj);
+    // nextBtn.hidden = true;
+    nextBtn.classList.add('question__button-next_inactive')
     return;
   }
   statsObj.currentQuestion++;
@@ -72,25 +75,20 @@ nextBtn.addEventListener('click', () => {
 
 
 function newGame() {
-  document.body.lastElementChild.style.filter = null;
   statsObj.objDataBird = createQuestionsOptions(birdsData);
   statsObj.currentQuestion = 1;
   statsObj.score = 0;
   statsObj.currentTry = 0;
-  if (document.querySelector('.gratz')) document.querySelector('.gratz').remove();
-  document.body.lastElementChild.style.pointerEvents = 'unset';
-  nextBtn.hidden = true;
   nextQuestion();
   updateScore(statsObj);
 }
-
 
 function nextQuestion() {
   //choose random question and shuffle options
   let currentQuestionArr = 'arr' + (statsObj.currentQuestion - 1);
   let currentQuestionOptions = shuffleArr(statsObj.objDataBird[currentQuestionArr]);
   let currentWinner = currentQuestionOptions[randomInteger(0, 5)];
-  console.log('w0w you are hascker!', currentWinner.name);
+  console.log('w0w you are hascker!', currentWinner.nameEn, currentWinner.name);
 
   //set auido track to guess
   const playerOld = document.querySelector('.audio-player');
@@ -117,7 +115,8 @@ function nextQuestion() {
   })
 
   //reset UI
-  nextBtn.hidden = true;
+  // nextBtn.hidden = true;
+  nextBtn.classList.add('question__button-next_inactive')
   if (lang) birdName.textContent = 'Bird ' + statsObj.currentQuestion;
   else birdName.textContent = 'Птица ' + statsObj.currentQuestion;
   if (lang) birdDesctiption.textContent = 'Listen to the sounds and guess the bird';
@@ -132,13 +131,20 @@ function handleOption(event, currentWinner, currentQuestionOptions, player) {
     event.target.classList.add('button_active_true');
     soundVict.play();
     statsObj.score += 5 - statsObj.currentTry;
-    nextBtn.hidden = false;
+    // nextBtn.hidden = false;
+    nextBtn.classList.remove('question__button-next_inactive');
     uncoverBird(currentWinner);
     updateScore(statsObj);
     showAllBirds(currentQuestionOptions);
     player.firstElementChild.pause();
-
-  } else if (nextBtn.hidden) {
+    if (statsObj.currentQuestion === 6) {
+      if (lang) nextBtn.textContent = 'Get a gift!';
+      else nextBtn.textContent = 'Получить по заслугам!';
+    } else {
+      if (lang) nextBtn.textContent = 'Next';
+      else nextBtn.textContent = 'Далее';
+    }
+  } else  {
     const [clickedBird] = Array.from(currentQuestionOptions).filter(e => e.name === event.target.textContent || e.nameEn === event.target.textContent)
     uncoverBird(clickedBird)
     soundLoos.currentTime = 0;
@@ -148,35 +154,6 @@ function handleOption(event, currentWinner, currentQuestionOptions, player) {
   }
 }
 
-function gratz({ score }) {
-  const gratz = document.createElement('div');
-  gratz.className = 'gratz';
-  const text = document.createElement('p');
-  const ura = document.createElement('p');
-  if (lang) text.innerHTML = `You managed to get<br>${score} points of 30!`;
-  else text.innerHTML = `У тебя получилось набрать <br>${score} баллов из 30!`;
-  text.className = 'gratz__text';
-  ura.className = 'gratz__ura';
-  if (lang) ura.textContent = 'Hooray!';
-  else ura.textContent = 'Ура!';
-  gratz.append(ura, text);
-  const buttonNextTry = document.createElement('button');
-  buttonNextTry.className = 'button button_gratz';
-  gratz.append(buttonNextTry);
-  buttonNextTry.onclick = () => newGame();
-  if (score < 30) {
-    if (lang) buttonNextTry.textContent = 'One more try';
-    else buttonNextTry.textContent = 'Попробовать ещё раз';
-  } else {
-    if (lang) buttonNextTry.textContent = 'I am good';
-    else buttonNextTry.textContent = 'Я хорош';
-  }
-  document.body.lastElementChild.style.filter = 'blur(4px)';
-  document.body.lastElementChild.style.pointerEvents = 'none';
-  document.body.prepend(gratz);
-}
-
-
 function toStartPage() {
   greet.hidden = false;
   quiz.hidden = true;
@@ -185,7 +162,7 @@ function toStartPage() {
   if (document.querySelector('.gallery')) document.querySelector('.gallery').remove();
 }
 
-function gallery() {
+function showGallery() {
   const galleryDiv = document.createElement('article');
   galleryDiv.className = 'gallery';
   document.body.firstElementChild.append(galleryDiv);
@@ -241,4 +218,69 @@ function uncoverBird(birdObj) {
   }
   birdImg.src = birdObj.image;
   birdImg.classList.remove('question-bird__img_empty');
+}
+
+
+function gratz({ score }) {
+  document.body.firstElementChild.style.filter = 'blur(4px)';
+  document.body.firstElementChild.style.pointerEvents = 'none';
+  const gratz = document.createElement('div');
+  gratz.className = 'gratz';
+  const text = document.createElement('p');
+  const ura = document.createElement('p');
+  text.className = 'gratz__text';
+  ura.className = 'gratz__ura';
+  gratz.append(ura, text);
+  const buttonNextTry = document.createElement('button');
+  buttonNextTry.className = 'button button_gratz';
+  gratz.append(buttonNextTry);
+  document.body.prepend(gratz);
+  if (score < 30) {
+    if (lang) {
+      ura.textContent = 'So close!';
+      text.innerHTML = `You managed to get<br>${score} points of 30!`;
+      buttonNextTry.textContent = 'One more try';
+
+    } else {
+      ura.textContent = 'Близко!';
+      text.innerHTML = `У тебя получилось набрать <br>${score} баллов из 30!`;
+      buttonNextTry.textContent = 'Попробовать ещё раз';
+    }
+    buttonNextTry.onclick = () => {
+      gratz.remove();
+      document.body.firstElementChild.style.pointerEvents = 'unset';
+      document.body.firstElementChild.style.filter = null;
+      newGame();
+    }
+  } else {
+    if (lang) {
+      ura.textContent = 'Hooray!';
+      text.innerHTML = `You don't know what mistake is!`;
+      buttonNextTry.textContent = 'I am good';
+    }
+    else {
+      ura.textContent = 'Ура!';
+      text.innerHTML = `Ни одной ошибки!`;
+      buttonNextTry.textContent = 'Я хорош';
+    }
+    buttonNextTry.onclick = () => {
+      gratz.remove();
+      document.body.firstElementChild.style.pointerEvents = 'unset';
+      document.body.firstElementChild.style.filter = null;
+      toStartPage();
+    }
+    winCount++;
+    localStorage.setItem('winCount', winCount);
+    createGift(winCount)
+  }
+}
+
+function createGift(winCount = '1') {
+  const gift = document.createElement('div');
+  const qbok = document.createElement('img');
+  qbok.src = qbokSvg;
+  gift.className = 'gift';
+  document.body.append(gift);
+  gift.append(qbok);
+  gift.dataset.place = winCount;
 }
