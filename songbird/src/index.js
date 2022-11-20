@@ -9,6 +9,7 @@ import soundLoose from './assets/audio/loose1.mp3';
 import audioPlayer from './modules/audioPlayer';
 import { form as translateForm, lang } from './modules/translate';
 import qbokSvg from './assets/icon/qbok.svg';
+import './utils/consoleCheck'
 
 const logo = document.querySelector('.logo');
 const btnBegin = document.querySelector('.greet_button');
