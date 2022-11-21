@@ -51,13 +51,6 @@ const config = {
         exclude: /(node_modules|bower_components)/,
       },
       {
-        test: /\.woff2?$/i,
-        type: 'asset/resource',
-        generator: {
-          filename: 'fonts/[name][ext]'
-        }
-      },
-      {
         test: /\.(jpe?g|png|webp|gif|svg|mp3|wav|ogg)$/i,
         type: 'asset/resource',
       },
@@ -71,34 +64,9 @@ const config = {
 if (config.mode !== 'development') {
   config.entry = ['@babel/polyfill', './src/index.js'];
 
-  delete config.module.rules.at(-1).type;
-  config.module.rules.at(-1).use = [
-    'file-loader',
+  config.module.rules.push(
     {
-      loader: 'image-webpack-loader',
-      options: {
-        mozjpeg: {
-          progressive: true,
-        },
-        optipng: {
-          enabled: false,
-        },
-        pngquant: {
-          quality: [0.65, 0.90],
-          speed: 4
-        },
-        gifsicle: {
-          interlaced: false,
-        },
-        webp: {
-          quality: 75
-        }
-      }
-    },
-  ];
-
-  config.module.rules.push({
-    test: /\.m?js$/,
+    test: /\.js$/,
     exclude: /(node_modules|bower_components)/,
     use: {
       loader: 'babel-loader',
@@ -106,8 +74,8 @@ if (config.mode !== 'development') {
         presets: ['@babel/preset-env']
       }
     }
-  });
-
+  }
+  );
 }
 
 module.exports = config;

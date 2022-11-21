@@ -26,7 +26,8 @@ const questionList = document.querySelector('.question-list');
 const btnGallery = document.querySelector('.header__button_gallery');
 const btnNewGame = document.querySelector('.header__button_new-game');
 const questionBody = document.querySelector('.question__bird-audio');
-const livePlayers = document.getElementsByClassName('audio-player')
+const livePlayers = document.getElementsByClassName('audio-player');
+const questionRight = document.querySelector('.question-right__bird');
 
 const statsObj = {
   currentQuestion: 1,
@@ -82,6 +83,8 @@ function newGame() {
 }
 
 function nextQuestion() {
+  questionRight.hidden = true;
+
   window.scrollTo(0, 0);
   //choose random question and shuffle options
   let currentQuestionArr = 'arr' + (statsObj.currentQuestion - 1);
@@ -115,8 +118,8 @@ function nextQuestion() {
   //reset UI
   nextBtn.classList.add('question__button-next_inactive');
   nextBtn.classList.remove('question__button-next_mobile');
-  if (lang) birdName.textContent = 'Bird ' + statsObj.currentQuestion;
-  else birdName.textContent = 'Птица ' + statsObj.currentQuestion;
+  if (lang) birdName.textContent = '***';
+  else birdName.textContent = '***';
   if (lang) birdDesctiption.textContent = 'Listen to the sounds and guess the bird';
   else birdDesctiption.textContent = 'Прослушайте пение и угадайте птицу';
   birdImg.classList.add('question-bird__img_empty');
@@ -134,6 +137,7 @@ function handleOption(event, currentWinner, currentQuestionOptions, player) {
     statsObj.score += 5 - statsObj.currentTry;
     nextBtn.classList.remove('question__button-next_inactive');
     uncoverBird(currentWinner);
+    uncoverBirdRight(currentWinner);
     updateScore(statsObj);
     showAllBirds(currentQuestionOptions);
     player.firstElementChild.pause();
@@ -146,7 +150,8 @@ function handleOption(event, currentWinner, currentQuestionOptions, player) {
     }
   } else {
     const [clickedBird] = Array.from(currentQuestionOptions).filter(e => e.name === event.target.textContent || e.nameEn === event.target.textContent)
-    uncoverBird(clickedBird)
+    // uncoverBird(clickedBird);
+    uncoverBirdRight(clickedBird);
     soundLoos.currentTime = 0;
     soundLoos.play();
     event.target.classList.add('button_active_false')
@@ -159,6 +164,7 @@ function toStartPage() {
   quiz.hidden = true;
   window.onclick = null;
   btnNewGame.hidden = true;
+  questionRight.hidden = true;
   if (document.querySelector('.gallery')) document.querySelector('.gallery').remove();
 }
 
@@ -194,10 +200,10 @@ function showAllBirds(currentQuestionOptions) {
       for (const item of currentQuestionOptions) {
         if (item.name === bird || item.nameEn === bird) birdObj = item;
       }
-      uncoverBird(birdObj);
-      livePlayers.item(0).remove();
-      const player = audioPlayer(birdObj.audio);
-      birdDesctiption.before(player);
+      uncoverBirdRight(birdObj);
+      // livePlayers.item(0).remove();
+      // const player = audioPlayer(birdObj.audio);
+      // birdDesctiption.before(player);
     }
   })
 }
@@ -223,6 +229,27 @@ function uncoverBird(birdObj) {
   }
   birdImg.src = birdObj.image;
   birdImg.classList.remove('question-bird__img_empty');
+}
+
+function uncoverBirdRight(birdObj) {
+  questionRight.hidden = false;
+  if (lang) {
+    questionRight.children[0].textContent = birdObj.nameEn;
+    questionRight.children[1].textContent = birdObj.species;
+    const player = audioPlayer(birdObj.audio);
+    questionRight.children[3].innerHTML = '';
+    questionRight.children[3].append(player);
+    questionRight.children[4].textContent = birdObj.descEn;
+  } else {
+    questionRight.children[0].textContent = birdObj.name;
+    questionRight.children[1].textContent = birdObj.species;
+    questionRight.children[3].innerHTML = '';
+    const player = audioPlayer(birdObj.audio);
+    questionRight.children[3].append(player);
+    questionRight.children[4].textContent = birdObj.description;
+  }
+  questionRight.children[2].hidden = false;
+  questionRight.children[2].src = birdObj.image;
 }
 
 
