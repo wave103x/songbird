@@ -6,7 +6,7 @@ html(lang="ru")
   body
     main.main
       header.header
-        h1.logo song#[span bird]
+        h1.logo.hover-scale song#[span bird]
         form.lang-switch
           input(id="lng-ru" type="radio" name="lang" value="ru" checked hidden)
           label.lang-option(for="lng-ru") ru
@@ -55,8 +55,15 @@ html(lang="ru")
               .answers-list__item one
               .answers-list__item one
               .answers-list__item one
-            button.button.question__button-next.lng-next.question__button-next_inactive Далее
+            .question__right
+              button.button.question__button-next.lng-next.question__button-next_inactive Далее
+              .question-right__bird(hidden)
+                .question-right__name
+                .question-right__kind
+                img.question-right__img.question-bird__img(width="140" height="140" hidden)
+                .question-right__player
+                .question-right__desc
     footer.footer
       span ©2022
-      a(href="https://github.com/wave103x"): img.git(src=require('./assets/icon/githubLogo.svg').default)
-      a(href="https://rs.school/js/"): img.rs-logo(src=require('./assets/icon/rs_school_js.svg').default)
+      a(href="https://github.com/wave103x"): img.hover-scale.git(src=require('./assets/icon/githubLogo.svg').default)
+      a(href="https://rs.school/js/"): img.hover-scale.rs-logo(src=require('./assets/icon/rs_school_js.svg').default)
